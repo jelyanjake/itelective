@@ -6,10 +6,19 @@ include('func/auth.php');
 include('func/validate.php');
 $con = OpenCon();
 
-$sql_report = "SELECT sm.productid, p.productname, sm.stock_change, sm.movement_date
+class report{
+    public $sql_report() {
+        return "SELECT sm.productid, p.productname, sm.stock_change, sm.movement_date
+                        FROM stock_movements sm
+                        JOIN products p ON sm.productid = p.productid
+                        ORDER BY sm.movement_date DESC"
+    }
+}
+
+/*$sql_report = "SELECT sm.productid, p.productname, sm.stock_change, sm.movement_date
                FROM stock_movements sm
                JOIN products p ON sm.productid = p.productid
-               ORDER BY sm.movement_date DESC";
+               ORDER BY sm.movement_date DESC";*/
 
 $result_report = mysqli_query($con, $sql_report);
 
