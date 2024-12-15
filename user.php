@@ -2,7 +2,7 @@
 
 session_start();
 include('func/connection.php');
-include('func/auth.php');
+include('func/status.php');
 $con = OpenCon();
 
 $currentusername = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';

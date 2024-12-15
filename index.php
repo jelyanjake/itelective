@@ -4,41 +4,29 @@ session_start();
 include('func/connection.php');  
 $con = OpenCon();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = mysqli_real_escape_string($con, $_POST['username']);
-    $password = mysqli_real_escape_string($con, $_POST['password']);
-    
-    $sql = "SELECT * FROM users WHERE user = '$username'";
-    $result = mysqli_query($con, $sql);
-    
-    if (mysqli_num_rows($result) == 1) {
+// Include the Auth class
+include('func/auth.php');
 
-        $row = mysqli_fetch_assoc($result);
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['logged_in'] = true;
-            $_SESSION['username'] = $row['user'];
-            $_SESSION['level'] = $row['level'];
+    try {
+        $auth = new Auth($con); // Create an Auth object
+        if ($auth->login($username, $password)) {
             header("Location: dashboard.php");
-            exit;
+            exit();
         }
-        
-        else {
-            $_SESSION['error'] = "<strong>&#10071; Invalid username or password.</strong>";
-            header("Location: index.php");
-            exit;
-        } 
-    }
-        
-    else {
-        $_SESSION['error'] = "<strong>&#10071; Invalid username or password.</strong>";
+    } catch (Exception $e) {
+        $_SESSION['error'] = "<strong>&#10071; " . $e->getMessage() . "</strong>";
         header("Location: index.php");
-        exit;
+        exit();
     }
 }
-    
+
 CloseCon($con);
-?> 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
